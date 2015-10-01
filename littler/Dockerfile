@@ -5,7 +5,7 @@
 #
 # docker build --rm -t shabbychef/littler .
 #
-# Created: 2015.09.15
+# Created: 2015.10.01
 # Copyright: Steven E. Pav, 2015
 # Author: Steven E. Pav
 # Comments: Steven E. Pav
