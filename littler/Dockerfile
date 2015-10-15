@@ -26,13 +26,11 @@ RUN (apt-get update -qq; \
   DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true apt-get install -y --no-install-recommends -q littler ; \
 	[ -f /usr/local/bin/install.r ] || ln -s /usr/share/doc/littler/examples/install.r /usr/local/bin/install.r ; \
 	[ -f /usr/local/bin/install2.r ] || ln -s /usr/share/doc/littler/examples/install2.r /usr/local/bin/install2.r ; \
-	/usr/local/bin/install.r docopt drat ; \
-	apt-get clean -y )
+	apt-get clean -y ; \
+	/usr/local/bin/install.r docopt drat )
 
 #####################################################
 # entry and cmd# FOLDUP
-USER root
-
 # always use array syntax:
 ENTRYPOINT ["/usr/bin/r"]
 
