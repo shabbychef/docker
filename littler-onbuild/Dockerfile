@@ -28,10 +28,10 @@ USER root
 # onbuild magic# FOLDUP
 ONBUILD ADD ./apt_packages.txt /tmp/apt_packages.txt
 ONBUILD RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
-	apt-get install -y --no-install-recommends -q $(cat /tmp/apt_packages.txt);
+	apt-get install -y --no-install-recommends -q $(grep -ve '^\s*#' /tmp/apt_packages.txt);
 
 ONBUILD ADD ./r_packages.txt /tmp/r_packages.txt
-ONBUILD RUN /usr/local/bin/install.r $(cat /tmp/r_packages.txt)
+ONBUILD RUN /usr/local/bin/install.r $(grep -ve '^\s*#' /tmp/r_packages.txt)
 # UNFOLD
 
 # everything else inherits from littler
