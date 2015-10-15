@@ -18,23 +18,19 @@ USER root
 # UNFOLD
 
 #####################################################
-# update ubuntu# FOLDUP
+# update ubuntu, install packages, and so on
 RUN (apt-get update -qq; \
-	apt-get update --fix-missing)
-# UNFOLD
+ apt-get update --fix-missing ; \
+ DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true apt-get install -y --no-install-recommends -q make wget perl gzip unzip; \
+ apt-get clean )
 
-#####################################################
-# get package dependencies# FOLDUP
-RUN (DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
-	apt-get install -y --no-install-recommends -q make wget perl gzip ; \
-	apt-get clean )
-# UNFOLD
+VOLUME ["/opt/make"]
+WORKDIR /opt/make
 
 #####################################################
 # entry and cmd# FOLDUP
-USER root
-
 # always use array syntax:
+
 ENTRYPOINT ["/usr/bin/make"]
 
 # ENTRYPOINT and CMD are better together:
