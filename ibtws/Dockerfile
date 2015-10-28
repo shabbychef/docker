@@ -5,13 +5,12 @@
 #
 # docker build --rm -t shabbychef/ibtws .
 #
-#
 # c.f. http://fabiorehm.com/blog/2014/09/11/running-gui-apps-with-docker/
 #
 # docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw shabbychef/ibtws 
-# docker run -it --rm --net=host -e DISPLAY=$DISPLAY -v $HOME/.Xauthority:/home/developer/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix:rw shabbychef/ibtws 
+# docker run -it --rm --net=host -e DISPLAY=$DISPLAY -v $HOME/.Xauthority:/home/ibtrader/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix:rw shabbychef/ibtws 
 # xhost + 
-# docker run -it --rm --net=host -e DISPLAY=$DISPLAY -v $HOME/.Xauthority:/home/developer/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix:rw --entrypoint=/bin/bash shabbychef/ibtws '-i'
+# docker run -it --rm --net=host -e DISPLAY=$DISPLAY -v $HOME/.Xauthority:/home/ibtrader/.Xauthority -v /tmp/.X11-unix:/tmp/.X11-unix:rw --entrypoint=/bin/bash shabbychef/ibtws '-i'
 #
 # then 
 #
@@ -41,28 +40,27 @@ RUN (apt-get update -qq; \
  /usr/bin/jar xf ib.jar ; \
  chmod +x /opt/ibtws/IBJts )
 
+ADD runtws.sh /opt/ibtws/IBJts/
+
 # c.f. http://fabiorehm.com/blog/2014/09/11/running-gui-apps-with-docker/
 # set these to your very own uid and gid, btw.
 
 ENV dev_uid 1000
 ENV dev_gid 1000
-ENV HOME /home/developer
+USER root
 
-RUN (mkdir -p /home/developer ; \
-    echo "developer:x:${dev_uid}:${dev_gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd ; \
-    echo "developer:x:${dev_uid}:" >> /etc/group ; \
-    echo "developer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/developer ; \
-    chmod 0440 /etc/sudoers.d/developer ; \
-    chown ${dev_uid}:${dev_gid} -R /home/developer )
+RUN (groupadd -g ${dev_gid} ibtrader; \
+  useradd --home-dir /home/ibtrader --create-home --no-user-group --gid ${dev_gid} --uid ${dev_uid} --shell /bin/bash ibtrader ; \
+	echo "ibtrader ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ibtrader ; \
+	chmod 0440 /etc/sudoers.d/ibtrader ; \
+	chmod +x /opt/ibtws/IBJts/runtws.sh )
 
-
-ADD runtws.sh /opt/ibtws/IBJts/
-RUN chmod +x /opt/ibtws/IBJts/runtws.sh
+ENV HOME /home/ibtrader
 
 #VOLUME ["/opt/ibtws"]
 WORKDIR /opt/ibtws/IBJts
 
-USER developer
+USER ibtrader
 
 #####################################################
 # entry and cmd# FOLDUP
@@ -71,8 +69,8 @@ USER developer
 #ENTRYPOINT ["/usr/bin/java"]
 #CMD ['-cp jts.jar:total.2013.jar -Xmx2048M -XX:MaxPermSize=512M jclient.LoginFrame .']
 
-ENTRYPOINT ["/bin/bash"]
-CMD ['runtws.sh','-cp','jts.jar:total.2013.jar','-Xmx2048M','-XX:MaxPermSize=512M']
+ENTRYPOINT ["/opt/ibtws/IBJts/runtws.sh"]
+CMD ['-cp','jts.jar:total.2013.jar','-Xmx2048M','-XX:MaxPermSize=512M']
 # UNFOLD
 
 #for vim modeline: (do not edit)
