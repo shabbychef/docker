@@ -26,9 +26,11 @@ USER root
 
 #####################################################
 # onbuild magic# FOLDUP
+# c.f.
+# http://docs.docker.com/engine/articles/dockerfile_best-practices/#build-cache
 ONBUILD ADD ./apt_packages.txt /tmp/apt_packages.txt
 ONBUILD RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
-	apt-get install -y --no-install-recommends -q $(grep -ve '^\s*#' /tmp/apt_packages.txt);
+	apt-get update && apt-get install -y --no-install-recommends -q $(grep -ve '^\s*#' /tmp/apt_packages.txt);
 
 ONBUILD ADD ./r_packages.txt /tmp/r_packages.txt
 ONBUILD RUN /usr/local/bin/install.r $(grep -ve '^\s*#' /tmp/r_packages.txt)
