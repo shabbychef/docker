@@ -22,10 +22,19 @@ USER root
 RUN (apt-get update -qq; \
  apt-get update --fix-missing ; \
  DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true apt-get install -y --no-install-recommends -q make wget perl gzip unzip; \
- apt-get clean )
+ apt-get clean -q -y )
+
+WORKDIR /opt/make
+
+RUN (mkdir -p /opt/make ; \
+echo " \n\
+\n\
+help: \n\
+\t@-echo "your Makefile is empty" \n\
+\n\
+" >> /opt/make/Makefile)
 
 VOLUME ["/opt/make"]
-WORKDIR /opt/make
 
 #####################################################
 # entry and cmd# FOLDUP
@@ -34,7 +43,7 @@ WORKDIR /opt/make
 ENTRYPOINT ["/usr/bin/make"]
 
 # ENTRYPOINT and CMD are better together:
-CMD ["help"]
+CMD ["--makefile","/opt/make/Makefile","help"]
 # UNFOLD
 
 #for vim modeline: (do not edit)
