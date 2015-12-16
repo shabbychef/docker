@@ -31,11 +31,12 @@ RUN (apt-get update -qq; \
  apt-get clean -q -y ; \
  mkdir -p /opt/trac /tmp/build )
 
+ADD https://raw.githubusercontent.com/jmmills/docker-trac/master/set_trac_user_password.py /usr/local/bin/
 ADD https://raw.githubusercontent.com/jmmills/docker-trac/master/setup_trac_config.sh /opt/trac/
 ADD https://raw.githubusercontent.com/jmmills/docker-trac/master/setup_trac.sh /opt/trac/
 ADD https://raw.githubusercontent.com/jmmills/docker-trac/master/run.sh /opt/trac/
+
 ADD https://raw.githubusercontent.com/jmmills/docker-trac/master/trac_logo.png /var/www/
-ADD https://raw.githubusercontent.com/jmmills/docker-trac/master/set_trac_user_password.py /usr/local/bin/
 
 RUN ( chmod 755 /usr/local/bin/set_trac_user_password.py ; \
 	chmod 700 /opt/trac/*.sh )
