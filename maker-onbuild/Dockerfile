@@ -27,7 +27,7 @@ USER root
 # onbuild magic# FOLDUP
 ONBUILD ADD ./apt_packages.txt /tmp/apt_packages.txt
 ONBUILD RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
-	apt-get update -y -q && apt-get install -y --no-install-recommends -q $(grep -ve '^\s*#' /tmp/apt_packages.txt);
+ [ -f /tmp/apt_packages.txt ] && grep -q -ve '^\s*#' /tmp/apt_packages.txt && apt-get update -y -q && apt-get install -y --no-install-recommends -q $(grep -ve '^\s*#' /tmp/apt_packages.txt);
 
 ONBUILD ADD ./Makefile /opt/make/Makefile
 # UNFOLD
