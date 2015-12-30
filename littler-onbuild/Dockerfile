@@ -31,6 +31,9 @@ MAINTAINER Steven E. Pav, shabbychef@gmail.com
 USER root
 # UNFOLD
 
+# just make sure it is fresh:
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean -y && apt-get update -y -q;
+
 #####################################################
 # onbuild magic# FOLDUP
 # c.f.
@@ -38,11 +41,14 @@ USER root
 ONBUILD COPY ./*_packages.txt /tmp/
 
 ONBUILD RUN DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
- [ -f /tmp/apt_packages.txt ] && grep -q -ve '^\s*#' /tmp/apt_packages.txt && apt-get update -y -q && apt-get install -y --no-install-recommends -q $(grep -ve '^\s*#' /tmp/apt_packages.txt) || true;
+ [ -f /tmp/apt_packages.txt ] && grep -q -ve '^\s*#' /tmp/apt_packages.txt && \
+ apt-get update -y -qq && apt-get install -y --no-install-recommends -q $(grep -ve '^\s*#' /tmp/apt_packages.txt) || true;
 
-ONBUILD RUN [ -f /tmp/r_packages.txt ] && grep -q -ve '^\s*#' /tmp/r_packages.txt && /usr/local/bin/install.r $(grep -ve '^\s*#' /tmp/r_packages.txt) || true;
+ONBUILD RUN [ -f /tmp/r_packages.txt ] && grep -q -ve '^\s*#' /tmp/r_packages.txt && \
+ /usr/local/bin/install.r $(grep -ve '^\s*#' /tmp/r_packages.txt) || true;
 
-ONBUILD RUN [ -f /tmp/r_github_packages.txt ] && grep -q -ve '^\s*#' /tmp/r_github_packages.txt && /usr/local/bin/installGithub.r $(grep -ve '^\s*#' /tmp/r_github_packages.txt) || true;
+ONBUILD RUN [ -f /tmp/r_github_packages.txt ] && grep -q -ve '^\s*#' /tmp/r_github_packages.txt && \
+ /usr/local/bin/installGithub.r $(grep -ve '^\s*#' /tmp/r_github_packages.txt) || true;
 # UNFOLD
 
 # everything else inherits from littler

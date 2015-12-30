@@ -19,7 +19,9 @@ USER root
 
 #####################################################
 # update ubuntu, install packages, and so on
-RUN (apt-get update -qq; \
+RUN (rm -rf /var/lib/apt/lists/* ; \
+ apt-get clean -y ; \
+ apt-get update -y -qq; \
  apt-get update --fix-missing ; \
  DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true apt-get install -y --no-install-recommends -q make wget perl gzip unzip; \
  apt-get clean -q -y )

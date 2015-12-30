@@ -31,12 +31,16 @@ MAINTAINER Steven E. Pav, shabbychef@gmail.com
 USER root
 # UNFOLD
 
+# just make sure it is fresh:
+
 #####################################################
 # update ubuntu, get the package, make some links, clean up
 ENV REPOS http://cran.rstudio.com
 
 # according to Dirk, rocker/r-base ships with littler, so no need to install it?
-RUN (apt-get update -qq; \
+RUN (rm -rf /var/lib/apt/lists/* ; \
+ apt-get clean -y ; \
+ apt-get update -y -qq; \
  apt-get update --fix-missing ; \
  DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true apt-get install -y --no-install-recommends -q \
    libxml2-dev libcurl4-gnutls-dev libssl-dev pkg-config libssh2-1-dev ; \
